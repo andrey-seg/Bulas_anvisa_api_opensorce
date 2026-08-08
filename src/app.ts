@@ -4,12 +4,8 @@ import type { Request, Response} from 'express';
 import dotenv from 'dotenv';
 import chalk from 'chalk'
 
-//deixar importação de itens node aqui.
-import { expectFailure } from 'node:test';
-import { error } from 'node:console';
-
 //Deixar importação de funções de aquivos aqui.
-import serchForMedication from './integrations/anvisa.js';
+import {serchForMedication} from './integrations/anvisa.js';
 
 
 dotenv.config();

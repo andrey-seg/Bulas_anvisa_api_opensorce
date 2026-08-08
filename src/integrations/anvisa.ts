@@ -1,4 +1,4 @@
-async function serchForMedication(medicationName:string): Promise<any> {
+export async function serchForMedication(medicationName:string): Promise<any> {
 
     const anvisaUrl = `https://consultas.anvisa.gov.br/api/consulta/bulario?column=&count=10&filter[nomeProduto]=${encodeURIComponent(medicationName)}&order=asc&page=1`;
 
@@ -7,7 +7,7 @@ async function serchForMedication(medicationName:string): Promise<any> {
             'Authorization': 'Guest',
             'Accept': 'application/json, text/plain, */*',
             'Referer': 'https://consultas.anvisa.gov.br/',
-            'User-Agent': 'Mozilla/5.0 ...'
+            'User-Agent': 'Mozilla/...'
         }
     });
 
@@ -18,5 +18,3 @@ async function serchForMedication(medicationName:string): Promise<any> {
     const responseData = await response.json();
     return responseData;
 };
-
-export default serchForMedication;
