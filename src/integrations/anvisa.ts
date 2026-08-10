@@ -1,20 +1,42 @@
+import puppeteerExtraImport from "puppeteer-extra";
+import StealthPlugin from 'puppeteer-extra-plugin-stealth';
+
+const puppeteerExtra = puppeteerExtraImport as any;
+let browserInstance: any = null;
+
+async function getBrowser() {
+    if(!browserInstance){
+        browserInstance = await puppeteerExtra.launch();
+    };
+    return browserInstance;
+}
+
+puppeteerExtra.use(StealthPlugin());
+
 export async function serchForMedication(medicationName:string): Promise<any> {
+    console.log('Nome recebido:', medicationName);
 
-    const anvisaUrl = `https://consultas.anvisa.gov.br/api/consulta/bulario?column=&count=10&filter[nomeProduto]=${encodeURIComponent(medicationName)}&order=asc&page=1`;
+    const browser = await getBrowser();
+    const page = await browser.newPage();
+     
+    await page.goto('https://consultas.anvisa.gov.br/', { waitUntil: 'networkidle0'});
+    
+    const result = await page.evaluate(async (name: string) => {
+        const url = `https://consultas.anvisa.gov.br/api/consulta/bulario?column=&count=10&filter[nomeProduto]=${encodeURIComponent(name)}&order=asc&page=1`;
 
-    const response = await fetch(anvisaUrl, {
-        headers: {
-            'Authorization': 'Guest',
-            'Accept': 'application/json, text/plain, */*',
-            'Referer': 'https://consultas.anvisa.gov.br/',
-            'User-Agent': 'Mozilla/...'
-        }
-    });
+        const response = await fetch(url, {
+            headers: {
+                'Authorization': 'Guest',
+                'Accept': 'application/json, text/plain, */*'
+            }
+        });
 
-    if(!response.ok){
-        throw new Error(`Erro in serch for medication: ${response.status}`)
-    }
+        const text = await response.text();
+        return { status: response.status, body: text.slice(0, 300) };
+    }, medicationName);
+    console.log(result)
 
-    const responseData = await response.json();
-    return responseData;
+    await page.close();
+
+    return result;
 };
