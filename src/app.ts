@@ -5,7 +5,9 @@ import dotenv from 'dotenv';
 import chalk from 'chalk'
 
 //Deixar importação de funções de aquivos aqui.
-import {serchForMedication} from './integrations/anvisa.js';
+import { serchForMedication } from './integrations/anvisa.js';
+import { getMedicationOnDetail } from './integrations/getMedicationOnDetail.js';
+import { error } from 'node:console';
 
 
 dotenv.config();
@@ -27,11 +29,22 @@ app.get('/medication', async (req: Request, res: Response) => {
     //buscar resultado em anvisa.ts
    const result = await serchForMedication(name);
     //devolução da resposta em formato json.
-   res.json(result);} 
-    
-    catch(error){
+   res.json(result);
+    }catch(error){
         console.log(chalk.red(`Erro => ${error}`))
         res.status(500).json({erro: `Falha ao buscar medicamento`})
+    };
+});
+
+app.get('/medication/:id/detail', async (req: Request, res: Response) => {
+
+    try{
+        const id = Number(req.params.id);
+        const result = await getMedicationOnDetail(id)
+        res.json(result);
+    }catch(error){
+        console.log(chalk.red(`Erro => ${error}`));
+        res.status(500).json({erro: `Falha ao buscar id de medicamento`});
     };
 });
 
