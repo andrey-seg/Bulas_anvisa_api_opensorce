@@ -7,7 +7,7 @@ import chalk from 'chalk'
 //Deixar importação de funções de aquivos aqui.
 import { serchForMedication } from './integrations/anvisa.js';
 import { getMedicationOnDetail } from './integrations/getMedicationOnDetail.js';
-import { error } from 'node:console';
+import { downloadBulaPdf } from './integrations/downloadBulaPdf.js';
 
 
 dotenv.config();
@@ -45,6 +45,20 @@ app.get('/medication/:id/detail', async (req: Request, res: Response) => {
     }catch(error){
         console.log(chalk.red(`Erro => ${error}`));
         res.status(500).json({erro: `Falha ao buscar id de medicamento`});
+    };
+});
+
+app.get('/medication/bula/:token', async (req: Request, res: Response) => {
+  try {
+    
+    const token = req.params.token as string;
+    const result = await downloadBulaPdf(token)
+
+    res.setHeader('Content-Type', 'application/pdf')
+    res.send(result)
+  }catch (error){
+        console.log(chalk.red(`Erro => ${error}`));
+        res.status(500).json({erro: `Falha ao buscar pdf de medicamento`});
     };
 });
 
