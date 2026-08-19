@@ -4,7 +4,7 @@ import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 const puppeteerExtra = puppeteerExtraImport as any;
 let browserInstance: any = null;
 
-async function getBrowser() {
+export async function getBrowser() {
     if(!browserInstance){
         browserInstance = await puppeteerExtra.launch();
     };
